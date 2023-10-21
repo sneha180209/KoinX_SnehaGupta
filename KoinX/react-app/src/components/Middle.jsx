@@ -8,18 +8,28 @@ function Middle() {
     const lessThanSymbol = '<';
     const moreThanSymbol = '>';
 
+    const [selectedValue, setSelectedValue] = useState('hosting-small');
+
+
     const submission=()=>{
         let purchasePrice = purchase;
         let salePrice = sale;
         let expense = expenses;
         let capitalGainsAmount = salePrice - purchasePrice - expense;
-        let longTermGainsDiscount = capitalGainsAmount * 0.5;
-        let netCapitalGainsTaxAmount = longTermGainsDiscount * 0.325;
-        let taxYouNeedToPay = netCapitalGainsTaxAmount * 0.325;
+        let longTermGainsDiscount;
+        let netCapitalGainsTaxAmount;
+        if (selectedValue === 'hosting-large' && capitalGainsAmount>0) {
+        longTermGainsDiscount = capitalGainsAmount * 0.5;
+        netCapitalGainsTaxAmount = capitalGainsAmount-longTermGainsDiscount;
+        } else {
+        longTermGainsDiscount = 0; // Set a default value if not selected
+        netCapitalGainsTaxAmount = salePrice - purchasePrice - expense;
+        }
+
         document.getElementById('gainsamt').innerHTML = capitalGainsAmount;
         document.getElementById('longtermgains').innerHTML = longTermGainsDiscount;
         document.getElementById('netcapitalgains').innerHTML = netCapitalGainsTaxAmount;
-        document.getElementById('taxyouneedtopay').innerHTML = taxYouNeedToPay;
+        // document.getElementById('taxyouneedtopay').innerHTML = taxYouNeedToPay;
     }
     return (
         <div className='middle'>
@@ -103,22 +113,22 @@ function Middle() {
                 <div className='grid-cols-1'>
                     <h3 className="block mb-2 text-sm font-medium text-gray-900 dark-text-white">Investment Type</h3>
                     <div className="flex flex-wrap items-start justify-start gap-4">
-                        <input type="radio" id="hosting-small" name="hosting" value="hosting-small" className="hidden peer"
-                            required />
                         <label htmlFor="hosting-small"
-                            className="inline-flex items-start justify-start w-32 p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark-hover-text-gray-300 dark-border-gray-700 dark-peer-checked-text-blue-500 dark-peer-checked-border-blue-600 dark-peer-checked-text-blue-600 hover-text-gray-600 hover-bg-gray-100 dark-text-gray-400 dark-bg-gray-800 dark-hover-bg-gray-700">
-                            <div className="block">
-                                <div className="w-half text-sm font-semibold"> {lessThanSymbol} 12 months</div>
-                            </div>
+                        className={`inline-flex items-start justify-start w-32 p-5 text-gray-500 bg-white border ${selectedValue === 'hosting-small' ? 'border-blue-600' : 'border-gray-200'} rounded-lg cursor-pointer dark-hover-text-gray-300 dark-border-gray-700 dark-peer-checked-text-blue-500 dark-peer-checked-border-blue-600 dark-peer-checked-text-blue-600 hover-text-gray-600 hover-bg-gray-100 dark-text-gray-400 dark-bg-gray-800 dark-hover-bg-gray-700`}
+                        >
+                        <input type="radio" id="hosting-small" name="hosting" value="hosting-small" className="hidden peer" required onChange={(e)=>setSelectedValue(e.target.value)} checked={selectedValue === 'hosting-small'} />
+                        <div className="block">
+                            <div className="w-half text-sm font-semibold">{'< 12 months'}</div>
+                        </div>
                         </label>
 
-                        <input type="radio" id="hosting-large" name="hosting" value="hosting-large" className="hidden peer"
-                            required />
                         <label htmlFor="hosting-large"
-                            className="inline-flex items-start justify-start w-32 p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark-hover-text-gray-300 dark-border-gray-700 dark-peer-checked-text-blue-500 dark-peer-checked-border-blue-600 dark-peer-checked-text-blue-600 hover-text-gray-600 hover-bg-gray-100 dark-text-gray-400 dark-bg-gray-800 dark-hover-bg-gray-700">
-                            <div className="block">
-                                <div className="w-half text-sm font-semibold">{moreThanSymbol} 12 months</div>
-                            </div>
+                        className={`inline-flex items-start justify-start w-32 p-5 text-gray-500 bg-white border ${selectedValue === 'hosting-large' ? 'border-blue-600' : 'border-gray-200'} rounded-lg cursor-pointer dark-hover-text-gray-300 dark-border-gray-700 dark-peer-checked-text-blue-500 dark-peer-checked-border-blue-600 dark-peer-checked-text-blue-600 hover-text-gray-600 hover-bg-gray-100 dark-text-gray-400 dark-bg-gray-800 dark-hover-bg-gray-700`}
+                        >
+                        <input type="radio" id="hosting-large" name="hosting" value="hosting-large" className="hidden peer" required onChange={(e)=>setSelectedValue(e.target.value)} checked={selectedValue === 'hosting-large'} />
+                        <div className="block">
+                            <div className="w-half text-sm font-semibold">{' > 12 months'}</div>
+                        </div>
                         </label>
                     </div>
                 </div>
@@ -186,7 +196,7 @@ function Middle() {
             </div>
 
             <div className="w-full grid grid-cols-2 gap-4 mx-auto p-4">
-                <div className='bg-green-200 rounded-lg flex flex-wrap items-start justify-start p-8'>Net Capital gains tax amount
+                <div id="netcapitalgains" className='bg-green-200 rounded-lg flex flex-wrap items-start justify-start p-8'>Net Capital gains tax amount
                 </div>
 
                 <div className='bg-blue-200 rounded-lg flex flex-wrap items-start justify-start p-8'>The tax you need to pay*
